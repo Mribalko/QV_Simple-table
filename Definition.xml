@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ExtensionObject    Path="Simple table"
+                    Label="Simple table"
+                    Description="Простая таблица"
+                    Type="Object"
+>   
+    
+    <Dimension Multiple="" Label="Dimensions" Initial="" />
+    <Expression Multiple="" Label="Expressions" Initial="" />
+
+	<Initiate Name="Caption.Show" Value="1" />
+    <Initiate Name="Layout.Border.Use" Value="1" />
+    <Initiate Name="Layout.Normal.Width" Value="400" />
+
+
+    <PropertiesPage  Version="11" />
+  
+</ExtensionObject>

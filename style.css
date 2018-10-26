@@ -1,0 +1,33 @@
+.st-Table {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+    box-sizing: border-box;
+    
+}
+.st-TableRow {
+    display: table-row;
+}
+.st-TableHeadRow {
+    display: table-row;
+    background-color: #6e6d6d;
+    color: white;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+}
+.st-TableCell {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 3px;
+    height: 30px;
+    width: 50%;
+    box-sizing: border-box;
+    border: 1px solid #999999;
+}
+
+.st-view {
+    height: 100%;
+    overflow-y: auto;
+}
+

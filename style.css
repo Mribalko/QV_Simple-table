@@ -21,13 +21,14 @@
     vertical-align: middle;
     padding: 3px;
     height: 30px;
-    width: 50%;
+    
     box-sizing: border-box;
     border: 1px solid #999999;
 }
 
 .st-view {
-    height: 100%;
+    height: calc(100% - 30px);
+    position: relative;
     overflow-y: auto;
 }
 

@@ -8,30 +8,20 @@ $.getScript(resourcePath + '/Simple table.js', () => {
     Qva.AddExtension("Simple table", function() {
         try {
                 
-            console.log('Repainting started')
+            console.log('Repainting started');
+            //console.log(this);
             let Extension =  this;
 
-            let tableObjectParams = Extension.simpleTableParams ? Extension.simpleTableParams: null;
+            let tableObjectParams = Extension.simpleTableParams ? Extension.simpleTableParams: null;           
             
             if(!tableObjectParams) {
+
                 simpleTableInit(Extension);
                 return;
             }
 
             console.log('Drawing');
-            tableObjectParams.cellHeight = 30; //$('.st-TableCell').outerHeight();
-            $(tableObjectParams.contentElement).height(tableObjectParams.cellHeight * Extension.Data.TotalSize.y);
-
-            
-            let viewHeight = tableObjectParams.viewElement.clientHeight;
-            let viewWidth = tableObjectParams.viewElement.clientWidth;
-
-            if(tableObjectParams.viewHeight != viewHeight || tableObjectParams.viewWidth != viewWidth) {
-                tableObjectParams.viewHeight = viewHeight;
-                tableObjectParams.viewWidth = viewWidth;
-                tableObjectParams.viewElement.scrollTop = 0;
-            }
-
+           
             updateTableContents(Extension);
             
         }

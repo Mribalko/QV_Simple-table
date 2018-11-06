@@ -69,7 +69,7 @@ function simpleTableInit(Extension) {
     spinnerElement.className = 'st-Spinner';
 
     let spinnerImage = document.createElement('img');
-    spinnerImage.src = 'https://sbt-gas-3005/QvAjaxZfc/htc/Images/Working.gif';//resourcePath + '/spinner.svg';
+    spinnerImage.src = resourcePath + '/spinner.gif';
 
 
     let tableObject = new SimpleTable();

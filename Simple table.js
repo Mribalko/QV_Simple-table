@@ -70,9 +70,9 @@ function simpleTableInit(Extension) {
 
 
     let tableObject = new SimpleTable();
- 
+    
+    Extension.Element.appendChild(spinnerElement);
     Extension.Element.appendChild(tableHeader);
-        //tableHeader.appendChild(tableObject.addHeaderRow(Extension.Data.HeaderRows[0]));
     Extension.Element.appendChild(viewElement);
         viewElement.appendChild(contentElement);
             contentElement.appendChild(tableObject.tableElem);    

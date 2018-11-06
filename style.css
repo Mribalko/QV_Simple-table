@@ -32,3 +32,10 @@
     overflow-y: auto;
 }
 
+.st-Spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}

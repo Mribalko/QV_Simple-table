@@ -68,17 +68,18 @@ function simpleTableInit(Extension) {
     let spinnerElement = document.createElement('div');
     spinnerElement.className = 'st-Spinner';
 
+    let spinnerImage = document.createElement('img');
+    spinnerImage.src = 'https://sbt-gas-3005/QvAjaxZfc/htc/Images/Working.gif';//resourcePath + '/spinner.svg';
+
 
     let tableObject = new SimpleTable();
     
     Extension.Element.appendChild(spinnerElement);
+        spinnerElement.appendChild(spinnerImage);
     Extension.Element.appendChild(tableHeader);
     Extension.Element.appendChild(viewElement);
         viewElement.appendChild(contentElement);
-            contentElement.appendChild(tableObject.tableElem);    
-    
-    //let cellHeight = $('.st-TableCell').outerHeight();
-   
+            contentElement.appendChild(tableObject.tableElem);      
 
     // Save objects links and settings
     Extension.simpleTableParams = {
@@ -86,6 +87,7 @@ function simpleTableInit(Extension) {
             contentElement: contentElement,
             tableElement: tableObject.tableElem,
             tableHeaderElement: tableHeader,
+            spinnerElement: spinnerElement,
             tableObject: tableObject,
             viewHeight: 0,
             viewWidth: 0,
@@ -110,13 +112,14 @@ function simpleTableInit(Extension) {
 
     $(viewElement).bind('scroll', function() {
             
+        $(spinnerElement).show();
         if(isScrolling) {
             window.clearTimeout( isScrolling );
         }        
 
         // Set a timeout to run after scrolling ends
         isScrolling = setTimeout(function() {
-
+            $(spinnerElement).hide();
             updateTableContents(Extension);
 
         }, 200);
@@ -138,11 +141,20 @@ function updateTableContents(Extension) {
         return;
     }
 
+    
+
     let viewHeight = tableObjectParams.viewElement.clientHeight;  
     if(tableObjectParams.viewHeight != viewHeight) {
         tableObjectParams.viewHeight = viewHeight;
         tableObjectParams.visibleCellsCount = Math.round(tableObjectParams.viewElement.clientHeight / tableObjectParams.cellHeight);
     }
+
+    let curSlice = Extension.Data.Rows.slice(cellsTopOffset, cellsTopOffset +  tableObjectParams.visibleCellsCount + tableObjectParams.cellsBufferCount);
+    if(curSlice.length == 0) {
+        tableObjectParams.viewElement.scrollTop = 0;
+        return;
+    }
+    tableObjectParams.tableObject.appendData(curSlice);
 
     let viewWidth = tableObjectParams.viewElement.clientWidth;
     if(tableObjectParams.viewWidth != viewWidth) {
@@ -160,12 +172,7 @@ function updateTableContents(Extension) {
     $(tableObjectParams.tableHeaderElement).empty();
     tableObjectParams.tableHeaderElement.appendChild(tableObjectParams.tableObject.addHeaderRow(Extension.Data.HeaderRows[0]));
 
-    let curSlice = Extension.Data.Rows.slice(cellsTopOffset, cellsTopOffset +  tableObjectParams.visibleCellsCount + tableObjectParams.cellsBufferCount);
-    if(curSlice.length == 0) {
-        tableObjectParams.viewElement.scrollTop = 0;
-        return;
-    }
-    tableObjectParams.tableObject.appendData(curSlice);
+    
 
     let tableMargin = tableObjectParams.viewElement.scrollTop - tableObjectParams.viewElement.scrollTop % tableObjectParams.cellHeight;
     $(tableObjectParams.tableElement).css('transform', 'translate(0, ' + tableMargin + 'px)');

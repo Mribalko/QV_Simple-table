@@ -5,11 +5,14 @@ function SimpleTable() {
     this.tableElem = document.createElement('div');
     this.tableElem.className = 'st-Table';
         
-    this.addCell= function(value) {
-        let cell = document.createElement('div');
-        cell.className = 'st-TableCell';
-        cell.innerText = value;
-        return cell;
+    this.addCell= function(cell) {
+        let cellElement = document.createElement('div');
+        cellElement.className = 'st-TableCell';
+        cellElement.innerText = cell.text;
+        if(cell.value) {
+            cellElement.setAttribute('cellValue', cell.value);
+        }        
+        return cellElement;
     }
 
     this.addRow = function(cellsArray, style) {
@@ -21,7 +24,7 @@ function SimpleTable() {
 
         cellsArray.forEach(cell => {
             
-            let cellElement = this.addCell(cell.text);
+            let cellElement = this.addCell(cell);
             $(cellElement).width(columnWidth + '%');
             row.appendChild(cellElement);
         });
@@ -97,14 +100,32 @@ function simpleTableInit(Extension) {
             dataRowsCount: 0
         };
     
+    Qv.GetCurrentDocument().GetCurrentSelections({
+        onChange: function () {
+
+            console.log(this.Data.Rows);      
+        }
+        });
     
     
     // Bindings
-    $(tableObject.tableElem).bind('click', function() {
-    
-        console.log('click fired!');
-        Extension.ObjectMgr.PartialLoad(Extension.Name, {x: 0, y: 204});
-        console.log(Extension);          
+    $(tableObject.tableElem).bind('click', function(event) {
+        
+        let cell = event.target;
+        let colIndex = Array.from(cell.parentElement.children).indexOf(cell);
+
+        if(cell.attributes["cellvalue"]) {
+            
+            let params = {
+                select: cell.attributes["cellvalue"].value,
+                toggle: false
+            }
+        
+            Extension.DocumentMgr.Set(Extension.Name + ".C" + colIndex, params, null);
+        }
+        
+     
+
     });
 
     let isScrolling;
@@ -114,7 +135,7 @@ function simpleTableInit(Extension) {
             
         $(spinnerElement).show();
         if(isScrolling) {
-            window.clearTimeout( isScrolling );
+            window.clearTimeout(isScrolling);
         }        
 
         // Set a timeout to run after scrolling ends
@@ -156,11 +177,8 @@ function updateTableContents(Extension) {
     }
     tableObjectParams.tableObject.appendData(curSlice);
 
-    let viewWidth = tableObjectParams.viewElement.clientWidth;
-    if(tableObjectParams.viewWidth != viewWidth) {
-        tableObjectParams.viewWidth = viewWidth;
-        $(tableObjectParams.tableHeaderElement).width(tableObjectParams.contentElement.clientWidth);
-    }
+    
+    
 
     let dataRowsCount = Extension.Data.TotalSize.y;
     if(tableObjectParams.dataRowsCount != dataRowsCount) {
@@ -171,7 +189,7 @@ function updateTableContents(Extension) {
 
     $(tableObjectParams.tableHeaderElement).empty();
     tableObjectParams.tableHeaderElement.appendChild(tableObjectParams.tableObject.addHeaderRow(Extension.Data.HeaderRows[0]));
-
+    $(tableObjectParams.tableHeaderElement).width(tableObjectParams.contentElement.clientWidth);
     
 
     let tableMargin = tableObjectParams.viewElement.scrollTop - tableObjectParams.viewElement.scrollTop % tableObjectParams.cellHeight;

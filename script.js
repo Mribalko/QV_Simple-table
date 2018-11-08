@@ -9,7 +9,7 @@ $.getScript(resourcePath + '/Simple table.js', () => {
         try {
                 
             console.log('Repainting started');
-            //console.log(this);
+            console.log(this);
             let Extension =  this;
 
             let tableObjectParams = Extension.simpleTableParams ? Extension.simpleTableParams: null;           

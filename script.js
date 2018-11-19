@@ -7,20 +7,20 @@ $.getScript(resourcePath + '/Simple table.js', () => {
 
     Qva.AddExtension("Simple table", function() {
         try {
-                
-            console.log('Repainting started');
-            console.log(this);
+             
+            //console.log('Repainting started');
+            //console.log(this);
             let Extension =  this;
+            
 
             let tableObjectParams = Extension.simpleTableParams ? Extension.simpleTableParams: null;           
             
             if(!tableObjectParams) {
 
                 simpleTableInit(Extension);
-                return;
             }
 
-            console.log('Drawing');
+            //console.log('Drawing');
            
             updateTableContents(Extension);
             

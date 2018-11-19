@@ -10,7 +10,7 @@ function SimpleTable() {
         cellElement.className = 'st-TableCell';
         cellElement.innerText = cell.text;
         if(cell.value) {
-            cellElement.setAttribute('cellValue', cell.value);
+            cellElement.setAttribute('st-cell-value', cell.value);
         }        
         return cellElement;
     }
@@ -20,12 +20,9 @@ function SimpleTable() {
         let row = document.createElement('div');
         row.className = style;
 
-        let columnWidth = 100 / cellsArray.length;
-
-        cellsArray.forEach(cell => {
-            
-            let cellElement = this.addCell(cell);
-            $(cellElement).width(columnWidth + '%');
+        cellsArray.forEach((cellValue, index) => {
+            let cellElement = this.addCell(cellValue);
+            cellElement.setAttribute('st-column-num', index);
             row.appendChild(cellElement);
         });
 
@@ -100,38 +97,22 @@ function simpleTableInit(Extension) {
             dataRowsCount: 0
         };
     
-    Qv.GetCurrentDocument().GetCurrentSelections({
-        onChange: function () {
+    // Qv.GetCurrentDocument().GetCurrentSelections({
+    //     onChange: function () {
 
-            console.log(this.Data.Rows);      
-        }
-        });
+    //         console.log(this.Data.Rows);      
+    //     }
+    //     });
     
     
     // Bindings
-    $(tableObject.tableElem).bind('click', function(event) {
-        
-        let cell = event.target;
-        let colIndex = Array.from(cell.parentElement.children).indexOf(cell);
-
-        if(cell.attributes["cellvalue"]) {
-            
-            let params = {
-                select: cell.attributes["cellvalue"].value,
-                toggle: false
-            }
-        
-            Extension.DocumentMgr.Set(Extension.Name + ".C" + colIndex, params, null);
-        }
-        
-     
-
+    $(Extension.Element).on("remove", function(event) {        
+        console.log(event);
     });
-
+    
     let isScrolling;
 
-
-    $(viewElement).bind('scroll', function() {
+    $(viewElement).on('scroll', function() {
             
         $(spinnerElement).show();
         if(isScrolling) {
@@ -162,8 +143,6 @@ function updateTableContents(Extension) {
         return;
     }
 
-    
-
     let viewHeight = tableObjectParams.viewElement.clientHeight;  
     if(tableObjectParams.viewHeight != viewHeight) {
         tableObjectParams.viewHeight = viewHeight;
@@ -177,9 +156,6 @@ function updateTableContents(Extension) {
     }
     tableObjectParams.tableObject.appendData(curSlice);
 
-    
-    
-
     let dataRowsCount = Extension.Data.TotalSize.y;
     if(tableObjectParams.dataRowsCount != dataRowsCount) {
         tableObjectParams.dataRowsCount = dataRowsCount;
@@ -190,10 +166,57 @@ function updateTableContents(Extension) {
     $(tableObjectParams.tableHeaderElement).empty();
     tableObjectParams.tableHeaderElement.appendChild(tableObjectParams.tableObject.addHeaderRow(Extension.Data.HeaderRows[0]));
     $(tableObjectParams.tableHeaderElement).width(tableObjectParams.contentElement.clientWidth);
+
     
 
     let tableMargin = tableObjectParams.viewElement.scrollTop - tableObjectParams.viewElement.scrollTop % tableObjectParams.cellHeight;
-    $(tableObjectParams.tableElement).css('transform', 'translate(0, ' + tableMargin + 'px)');
     
+    $(tableObjectParams.tableElement).css('transform', 'translate(0, ' + tableMargin + 'px)');
+
+    $(tableObjectParams.tableElement).find('.st-TableCell').on('click', function(event) {
+        
+        let cell = event.target;
+        let colIndex = cell.attributes["st-column-num"].value
+        
+        //Array.from(cell.parentElement.children).indexOf(cell);
+
+        if(cell.attributes["st-cell-value"]) {
+            
+            let params = {
+                select: cell.attributes["st-cell-value"].value,
+                toggle: false
+            }
+        
+            Extension.DocumentMgr.Set(Extension.Name + ".C" + colIndex, params, null);
+        }            
+    });
+
+    for(let i = 0; i < Extension.Data.Rows[0].length-1; i++) {
+        
+        let curHeaderCell = $(tableObjectParams.tableHeaderElement).find('div.st-TableCell[st-column-num="'+ i +'"]');
+        let curTableCells = $(tableObjectParams.tableElement).find('div.st-TableCell[st-column-num="' + i + '"]');
+
+
+        curHeaderCell.width(curTableCells.width());
+
+        curTableCells.resizable({           
+            handles: 'e',
+            alsoResize: curHeaderCell,
+            stop: function(){    
+                curTableCells.width(Math.min(curTableCells.width(), curHeaderCell.width()));
+            }
+        });
+
+        curHeaderCell.resizable({           
+            handles: 'e',
+            alsoResize: curTableCells,
+            stop: function(){    
+                curHeaderCell.width(Math.min(curTableCells.width(), curHeaderCell.width()));
+            }
+        });
+
+
+    }
+
     
 }
